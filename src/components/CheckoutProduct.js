@@ -1,8 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
+import { addToBasket, removeFromBasket } from '../slices/basketSlice';
 
 import { StarIcon } from '@heroicons/react/solid';
 import CurrencyFormat from 'react-currency-format';
+import { useDispatch } from 'react-redux';
 
 const CheckoutProduct = ({
   id,
@@ -14,6 +16,28 @@ const CheckoutProduct = ({
   image,
   hasPrime,
 }) => {
+
+  const dispatch = useDispatch();
+
+  const addItemToCart = () => {
+    const product = {
+      id,
+      title,
+      price,
+      rating,
+      description,
+      category,
+      image,
+      hasPrime,
+    };
+
+    dispatch(addToBasket(product));
+  };
+
+  const removeItemFromCart = () => {
+    dispatch(removeFromBasket({ id }))
+  };
+
   return (
     <div className='grid grid-cols-5'>
       <Image src={image} height={200} width={200} objectFit="contain" />
@@ -30,15 +54,19 @@ const CheckoutProduct = ({
         </div>
 
         <p className='text-xs my-2 line-clamp-3'>{description}</p>
-        <CurrencyFormat value={price} displayType={'text'} thousandSeparator={true} prefix={"$"} />
+        <CurrencyFormat
+          value={price}
+          displayType={'text'}
+          thousandSeparator={true}
+          prefix={"$"} />
 
         {hasPrime && (
           <div className='flex items-center space-x-2'>
             <img
-            loading='lazy'
-            className='w-12'
-            src='https://links.papareact.com/fdw'
-            alt=''
+              loading='lazy'
+              className='w-12'
+              src='https://links.papareact.com/fdw'
+              alt=''
             />
             <p className='text-xs text-gray-500'>FREE Next-day Delivery</p>
           </div>
@@ -46,8 +74,8 @@ const CheckoutProduct = ({
       </div>
 
       <div className='flex flex-col space-y-2 my-auto justify-self-end'>
-        <button className='button'>Add to Cart</button>
-        <button className='button'>Remove from Cart</button>
+        <button className='button' onClick={addItemToCart}>Add to Cart</button>
+        <button className='button' onClick={removeItemFromCart}>Remove from Cart</button>
       </div>
     </div>
   );
