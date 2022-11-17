@@ -7,11 +7,17 @@ import { useSelector } from 'react-redux';
 import { selectItems, selectTotal } from '../slices/basketSlice';
 import CurrencyFormat from 'react-currency-format';
 import { useSession } from 'next-auth/react';
+import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe;
 
 const Checkout = () => {
   const items = useSelector(selectItems);
   const total = useSelector(selectTotal);
   const { data: session } = useSession();
+
+  const createCheckoutSession = () => {
+
+  };
 
   return (
     <div className='bg-gray-100'>
@@ -63,6 +69,8 @@ const Checkout = () => {
           </h2>
 
           <button
+          onClick={createCheckoutSession}
+          role="link"
           disabled={!session}
           className={`button mt-2 ${!session && 'from-gray-300 to-gray-500 border-gray-200 text-gray-300 cursor-not-allowed'}`}>
             {!session ? "Sign in to checkout" : "Proceed to checkout"}
