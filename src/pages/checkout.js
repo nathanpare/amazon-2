@@ -8,15 +8,29 @@ import { selectItems, selectTotal } from '../slices/basketSlice';
 import CurrencyFormat from 'react-currency-format';
 import { useSession } from 'next-auth/react';
 import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe;
+import axios from 'axios';
+const stripePromise = loadStripe(process.env.stripe_public_key);
 
 const Checkout = () => {
   const items = useSelector(selectItems);
   const total = useSelector(selectTotal);
   const { data: session } = useSession();
 
-  const createCheckoutSession = () => {
+  const createCheckoutSession = async () => {
+    const stripe = await stripePromise;
 
+    const checkoutSession = await axios.post("/api/create-checkout-session", {
+      items: items,
+      email: session.user.email
+    });
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: checkoutSession.data.id
+    });
+
+    if (result.error) {
+      alert(result.error.message);
+    }
   };
 
   return (
@@ -38,8 +52,8 @@ const Checkout = () => {
               : "Shopping Cart"}
             </h1>
 
-              {items.map((item, i) => (
-                <CheckoutProduct
+            {items.map((item, i) => (
+              <CheckoutProduct
                 key={i}
                 id={item.id}
                 title={item.title}
@@ -49,38 +63,38 @@ const Checkout = () => {
                 category={item.category}
                 image={item.image}
                 hasPrime={item.hasPrime}
-                />
-              ))}
+              />
+            ))}
           </div>
         </div>
 
         {/* RIGHT */}
         <div className='flex flex-col bg-white p-10 shadow-md'>
-        {items.length > 0 && (
-          <>
-          <h2 className='whitespace-nowrap'>Subtotal ({items.length} items):{" "}
-          <span className='font-bold'>
-          <CurrencyFormat
-          value={total}
-          displayType={'text'}
-          thousandSeparator={true}
-          prefix={"$"} />
-          </span>
-          </h2>
+          {items.length > 0 && (
+            <>
+              <h2 className='whitespace-nowrap'>Subtotal ({items.length} items):{" "}
+                <span className='font-bold'>
+                  <CurrencyFormat
+                    value={total}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={"$"} />
+                </span>
+              </h2>
 
-          <button
-          onClick={createCheckoutSession}
-          role="link"
-          disabled={!session}
-          className={`button mt-2 ${!session && 'from-gray-300 to-gray-500 border-gray-200 text-gray-300 cursor-not-allowed'}`}>
-            {!session ? "Sign in to checkout" : "Proceed to checkout"}
-          </button>
-          </>
-        )}
+              <button
+                onClick={createCheckoutSession}
+                role="link"
+                disabled={!session}
+                className={`button mt-2 ${!session && 'from-gray-300 to-gray-500 border-gray-200 text-gray-300 cursor-not-allowed'}`}>
+                {!session ? "Sign in to checkout" : "Proceed to checkout"}
+              </button>
+            </>
+          )}
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
 export default Checkout;
