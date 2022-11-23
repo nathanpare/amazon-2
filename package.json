@@ -12,6 +12,7 @@
     "@stripe/react-stripe-js": "^1.15.0",
     "@stripe/stripe-js": "^1.44.1",
     "@tailwindcss/line-clamp": "^0.2.0",
+    "axios": "^1.2.0",
     "firebase": "^8.6.1",
     "firebase-admin": "^11.3.0",
     "micro": "^9.4.1",
