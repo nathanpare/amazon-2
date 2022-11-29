@@ -1,8 +1,10 @@
 import React from 'react';
 import Header from '../components/Header';
 import { CheckCircleIcon } from '@heroicons/react/solid';
+import { useRouter } from 'next/router';
 
 const success = () => {
+  const router = useRouter();
   return (
     <div className='bg-gray-100 h-screen'>
       <Header />
@@ -17,7 +19,7 @@ const success = () => {
              We’ve successfully processed your payment.
              You can access your order information through the link below.
          </p>
-         <button className='button mt-8'>Go to my orders</button>
+         <button onClick={() => router.push("/orders")} className='button mt-8'>Go to my orders</button>
         </div>
       </main>
     </div>

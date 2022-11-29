@@ -58,7 +58,8 @@ const CheckoutProduct = ({
           value={price}
           displayType={'text'}
           thousandSeparator={true}
-          prefix={"$"} />
+          prefix={"$"}
+          />
 
         {hasPrime && (
           <div className='flex items-center space-x-2'>
